@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class BookTest extends TestCase
 {
-    use DatabaseTransactions;
+    // use DatabaseTransactions;
 
     public function testBookCreate()
     {
@@ -36,5 +36,8 @@ class BookTest extends TestCase
         $this->assertDatabaseHas('books', [
             'id' => $bookId,
         ]);
+
+        $response = $this->actingAs($user)->get('api/v1/books/' . $bookId);
+        $response->assertStatus(200);
     }
 }
