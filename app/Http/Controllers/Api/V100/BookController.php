@@ -13,10 +13,18 @@ use Illuminate\Support\Str;
 use App\Http\Resources\V1\BookResource;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\BookRepository;
 
 class BookController extends Controller
 {
     use HasApiTokens;
+    private BookRepository $bookRepository;
+
+    public function __construct(BookRepository $bookRepository)
+    {
+        $this->bookRepository = $bookRepository;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -49,17 +57,19 @@ class BookController extends Controller
         while (Book::find($uuid) !== null) {
             $uuid = (string) Str::uuid();
         }
-        $book->id = $uuid;
-        $book->title = $request->title;
-        $book->author = $request->author;
-        $book->publicationDate = $request->publicationDate;
-        $book->category = $request->category;
-        $book->price = $request->price;
-        $book->quantity = $request->quantity;
-        $book->images = $request->images;
-        $book->creator = Auth::user()->id;
+        $bookData = [
+            'id' => $uuid,
+            'title' => $request->title,
+            'author' => $request->author,
+            'publicationDate' => $request->publicationDate,
+            'category' => $request->category,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'images' => $request->images,
+            'creator' => Auth::user()->id,
+        ];
         try {
-            $book->save();
+            $book = $this->bookRepository->createBook($bookData);
             return response()->json([
                 'id' => $uuid
             ], 201);
@@ -73,8 +83,9 @@ class BookController extends Controller
      */
     public function show($id)
     {
-        $book = Book::find($id);
-        if (empty($book)) {
+        try {
+            $book = $this->bookRepository->findBook($id);
+        } catch (\Throwable $th) {
             return response()->json(null, 404);
         }
         return response()->json(new BookResource($book));
@@ -100,21 +111,24 @@ class BookController extends Controller
         if ($book->creator != Auth::user()->id) {
             return response()->json(null, 400);
         }
-        $book->title = $request->title;
-        $book->author = $request->author;
-        $book->publicationDate = $request->publicationDate;
-        $book->category = $request->category;
-        $book->price = $request->price;
-        $book->quantity = $request->quantity;
-        $book->images = $request->images;
+        $bookData = [
+            'title' => $request->title,
+            'author' => $request->author,
+            'publicationDate' => $request->publicationDate,
+            'category' => $request->category,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'images' => $request->images,
+        ];
         try {
-            $book->save();
+            $book = $this->bookRepository->updateBook($id, $bookData);
             $log_str = sprintf("User:%d updated book %s", Auth::user()->id, $id);
             Log::info($log_str);
             return response()->json([
                 'id' => $id
             ], 200);
         } catch (\Throwable $th) {
+            dd($th);
             return response()->json(null, 400);
         }
     }
@@ -132,7 +146,7 @@ class BookController extends Controller
             return response()->json(null, 400);
         }
         try {
-            $book->delete();
+            $book = $this->bookRepository->deleteBook($id);
             return response()->json(null, 204);
         } catch (\Throwable $th) {
             return response()->json(null, 400);

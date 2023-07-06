@@ -18,4 +18,16 @@ class Book extends Model
         'quantity' => 'integer',
         'publicationDate' => 'date:Y-m-d',
     ];
+
+    protected $fillable = [
+        'id',
+        'title',
+        'author',
+        'publicationDate',
+        'category',
+        'price',
+        'quantity',
+        'images',
+        'creator',
+    ];
 }
