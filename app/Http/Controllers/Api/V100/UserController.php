@@ -36,7 +36,7 @@ class UserController extends Controller
                     'status' => false,
                     'message' => 'validation error',
                     'errors' => $validateUser->errors()
-                ], 401);
+                ], 400);
             }
 
             $user = User::create([
@@ -49,7 +49,7 @@ class UserController extends Controller
                 'status' => true,
                 'message' => 'User Created Successfully',
                 'token' => $user->createToken("API TOKEN")->plainTextToken
-            ], 200);
+            ], 201);
 
         } catch (\Throwable $th) {
             return response()->json([
