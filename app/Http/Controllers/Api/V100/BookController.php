@@ -44,7 +44,6 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        $book = new Book();
         $uuid = (string) Str::uuid();
         while (Book::find($uuid) !== null) {
             $uuid = (string) Str::uuid();
@@ -82,14 +81,6 @@ class BookController extends Controller
             return response()->json(null, 404);
         }
         return response()->json(new BookResource($book));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Book $book)
-    {
-        //
     }
 
     /**
