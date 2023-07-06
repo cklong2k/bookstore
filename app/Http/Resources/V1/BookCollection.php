@@ -26,16 +26,7 @@ class BookCollection extends ResourceCollection
     {
         $records = [];
         foreach ($this->collection as $book) {
-            $record = [
-                'id' => $book->id,
-                'title' => $book->title,
-                'author' => $book->author,
-                'publicationDate' => $book->publicationDate,
-                'category' => $book->category,
-                'price' => $book->price,
-                'quantity' => $book->quantity,
-                'images' => $book->images,
-            ];
+            $record = new BookResource($book);
             $records[] = $record;
         }
 
