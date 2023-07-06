@@ -40,14 +40,6 @@ class BookController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreBookRequest $request)
@@ -81,9 +73,10 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Book $book)
     {
         try {
+            $id = $book->id;
             $book = $this->bookRepository->findBook($id);
         } catch (\Throwable $th) {
             return response()->json(null, 404);
@@ -102,8 +95,9 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBookRequest $request, $id)
+    public function update(UpdateBookRequest $request, Book $book)
     {
+        $id = $book->id;
         $book = Book::find($id);
         if (empty($book)) {
             return response()->json(null, 404);
@@ -136,8 +130,9 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Book $book)
     {
+        $id = $book->id;
         $book = Book::find($id);
         if (empty($book)) {
             return response()->json(null, 404);

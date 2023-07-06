@@ -25,8 +25,8 @@ Route::prefix('v1')->namespace('App\Http\Controllers\Api\V100')->group(function(
 
 Route::prefix('v1')->namespace('App\Http\Controllers\Api\V100')->middleware('auth:sanctum')->group(function() {
     Route::get('/books', 'BookController@index');
-    Route::get('/books/{id}', 'BookController@show');
+    Route::get('/books/{book}', 'BookController@show');
     Route::post('/books', 'BookController@store');
-    Route::put('/books/{id}', 'BookController@update');
-    Route::delete('/books/{id}', 'BookController@destroy');
+    Route::put('/books/{book}', 'BookController@update');
+    Route::delete('/books/{book}', 'BookController@destroy');
 });
