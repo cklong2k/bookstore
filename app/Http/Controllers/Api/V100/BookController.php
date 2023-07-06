@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Http\Resources\V1\BookResource;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
@@ -108,6 +109,8 @@ class BookController extends Controller
         $book->images = $request->images;
         try {
             $book->save();
+            $log_str = sprintf("User:%d updated book %s", Auth::user()->id, $id);
+            Log::info($log_str);
             return response()->json([
                 'id' => $id
             ], 200);
